@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="homeViewModel"
+            type="com.mujaffar.mujaffarminbrowsertest.home_module.viewmodel.HomeViewModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        tools:context=".ui.view.MainActivity">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonContacts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="@{()->homeViewModel.onContactButtonClicked()}"
+            android:text="@string/contacts"
+            />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonFavourites"
+            app:layout_constraintTop_toBottomOf="@+id/buttonContacts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:onClick="@{()->homeViewModel.onFavoriteButtonClicked()}"
+            android:text="Favourites"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonDeleted"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:onClick="@{()->homeViewModel.onDeleteButtonClick()}"
+            app:layout_constraintTop_toBottomOf="@+id/buttonFavourites"
+            android:text="Deleted"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="contact"
+            type="com.mujaffar.mujaffarminbrowsertest.database.DatabaseContactModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            tools:src="@mipmap/ic_launcher"
+            setContactImage="@{contact}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/contactImage" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Mujaffar"
+            android:text="@{contact.contactName}"
+            android:id="@+id/contactName"
+            android:layout_marginStart="10dp"
+            app:layout_constraintStart_toEndOf="@+id/contactImage" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contactName"
+            android:layout_marginTop="10dp"
+            android:text="@{contact.contactNumber}"
+            tools:text="+918949961595"
+            android:layout_marginStart="10dp"
+            android:id="@+id/contactNumber"
+            app:layout_constraintStart_toEndOf="@+id/contactImage" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            setFavoriteImage="@{contact}"
+            app:layout_constraintStart_toEndOf="@+id/contactImage"
+            android:id="@+id/addToFavorite"
+            android:layout_marginStart="10dp"
+            tools:src="@drawable/ic_filled_favorite"
+            app:layout_constraintTop_toBottomOf="@+id/contactNumber" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/addToFavorite"
+            android:id="@+id/deleteContact"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintTop_toBottomOf="@+id/contactNumber" />
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/deleteContact"
+            android:id="@+id/restoreContact"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:src="@drawable/ic_restore"
+            app:layout_constraintTop_toBottomOf="@+id/contactNumber" />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@color/black"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
