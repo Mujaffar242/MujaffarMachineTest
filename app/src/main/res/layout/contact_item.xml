@@ -7,6 +7,10 @@
         <variable
             name="contact"
             type="com.mujaffar.mujaffarminbrowsertest.database.DatabaseContactModel" />
+
+        <variable
+            name="updateContactListner"
+            type="com.mujaffar.mujaffarminbrowsertest.contact_module.view.UpdateContactInterface" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
+        android:onClick="@{()->updateContactListner.onContactClick(contact)}"
         android:layout_marginEnd="20dp">
 
         <ImageView
@@ -54,6 +59,7 @@
             android:layout_marginTop="10dp"
             android:padding="10dp"
             setFavoriteImage="@{contact}"
+            android:onClick="@{()->updateContactListner.changeFavoriteStatus(contact)}"
             app:layout_constraintStart_toEndOf="@+id/contactImage"
             android:id="@+id/addToFavorite"
             android:layout_marginStart="10dp"
@@ -69,6 +75,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginStart="20dp"
             android:src="@drawable/ic_delete"
+            android:onClick="@{()->updateContactListner.chnageDeleteStatus(contact)}"
             app:layout_constraintTop_toBottomOf="@+id/contactNumber" />
 
 
@@ -81,6 +88,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginStart="20dp"
             android:src="@drawable/ic_restore"
+            android:onClick="@{()->updateContactListner.chnageDeleteStatus(contact)}"
             app:layout_constraintTop_toBottomOf="@+id/contactNumber" />
 
 

@@ -2,6 +2,8 @@ package com.mujaffar.mujaffarminbrowsertest.contact_module.view.activities
 
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -17,6 +19,8 @@ import com.mujaffar.mujaffarminbrowsertest.contact_module.view.viewmodel.Contact
 import com.mujaffar.mujaffarminbrowsertest.database.DatabaseContactModel
 import com.mujaffar.mujaffarminbrowsertest.databinding.ActivityContactListBinding
 import com.mujaffar.mujaffarminbrowsertest.util.Utility
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
 
 class ContactListActivity : AppCompatActivity(), UpdateContactInterface {
@@ -31,7 +35,8 @@ class ContactListActivity : AppCompatActivity(), UpdateContactInterface {
     private var viewModelAdapter: ContactListAdapter? = null
 
     //for hold currency viewmodel
-    private lateinit var viewModel: ContactViewModel
+    @Inject
+    lateinit var viewModel: ContactViewModel
 
     //variable for hold list type
     lateinit var pageType: String
@@ -41,6 +46,9 @@ class ContactListActivity : AppCompatActivity(), UpdateContactInterface {
     lateinit var progressDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        AndroidInjection.inject(this)
+
         super.onCreate(savedInstanceState)
 
         //get page type from intent previous page
@@ -60,8 +68,6 @@ class ContactListActivity : AppCompatActivity(), UpdateContactInterface {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_contact_list)
 
 
-        //init viewmodel
-        viewModel = ViewModelProvider(this).get(ContactViewModel::class.java)
 
 
         //init viewmodel
@@ -76,7 +82,9 @@ class ContactListActivity : AppCompatActivity(), UpdateContactInterface {
         if (pageType.equals(Utility.contactList)) {
             viewModel.contactList?.observe(this, Observer { contact ->
                 contact?.apply {
-                    viewModelAdapter?.contacts = contact as List<DatabaseContactModel>
+                    //viewModelAdapter?.contacts = contact as List<DatabaseContactModel>
+
+                    viewModelAdapter?.submitList(contact as List<DatabaseContactModel>)
 
                     //if contact list is empty mean fetching contacts show loading spinner
                     if (contact.isEmpty())
@@ -94,8 +102,9 @@ class ContactListActivity : AppCompatActivity(), UpdateContactInterface {
 
             viewModel.favoriteContacts?.observe(this, Observer { contact ->
                 contact?.apply {
-                    viewModelAdapter?.contacts = contact as List<DatabaseContactModel>
-                    hideShowNODataBasedOnList(contact)
+                   // viewModelAdapter?.contacts = contact as List<DatabaseContactModel>
+                    viewModelAdapter?.submitList(contact as List<DatabaseContactModel>)
+                    hideShowNODataBasedOnList(contact as List<DatabaseContactModel>)
                 }
             })
 
@@ -105,8 +114,8 @@ class ContactListActivity : AppCompatActivity(), UpdateContactInterface {
 
             viewModel.deletedContacts?.observe(this, Observer { contact ->
                 contact?.apply {
-                    viewModelAdapter?.contacts = contact as List<DatabaseContactModel>
-                    hideShowNODataBasedOnList(contact)
+                    viewModelAdapter?.submitList(contact as List<DatabaseContactModel>)
+                    hideShowNODataBasedOnList(contact as List<DatabaseContactModel>)
                 }
             })
 
@@ -139,13 +148,7 @@ class ContactListActivity : AppCompatActivity(), UpdateContactInterface {
     }
 
 
-    /*
-    * for update clicked item of contact list and take action based of that
-    * like delete , favorite, restore events
-    * */
-    override fun updateContact(contactModel: DatabaseContactModel) {
-        viewModel.updateContact(contactModel)
-    }
+
 
 
     // function to the button on press
@@ -158,6 +161,66 @@ class ContactListActivity : AppCompatActivity(), UpdateContactInterface {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    override fun changeFavoriteStatus(contactModel: DatabaseContactModel) {
+        //invert the favorite status
+        viewModel.changeFavoriteStatus(contactModel)
+    }
+
+
+    override fun chnageDeleteStatus(contactModel: DatabaseContactModel) {
+        if(!contactModel.isDeleted)
+        {
+            showAlertDialog(contactModel)
+            return;
+        }
+        viewModel.changeDeleteStatus(contactModel)
+    }
+
+    override fun onContactClick(contactModel: DatabaseContactModel) {
+        /*
+      * if page type is not equal deleted list then on click of each row prompted call screen
+      * */
+        if (!pageType.equals(Utility.deletedList)) {
+                val intent = Intent(Intent.ACTION_DIAL)
+                intent.data = Uri.parse("tel:" + contactModel.contactNumber)
+                startActivity(intent)
+
+        }
+    }
+
+
+    /*
+   * show alert dialog for confirm deletion
+   * */
+    private fun showAlertDialog(
+        contactModel: DatabaseContactModel,
+    ) {
+        val builder = AlertDialog.Builder(this)
+        //set title for alert dialog
+        builder.setTitle("Delete Contact")
+        //set message for alert dialog
+        builder.setMessage("Do you want to delete this contact")
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+
+        //performing positive action
+        builder.setPositiveButton("Yes") { dialogInterface, which ->
+            viewModel.changeDeleteStatus(contactModel)
+            dialogInterface.dismiss()
+        }
+
+        //performing negative action
+        builder.setNegativeButton("No") { dialogInterface, which ->
+            dialogInterface.dismiss()
+        }
+        // Create the AlertDialog
+        val alertDialog: AlertDialog = builder.create()
+        // Set other dialog properties
+        alertDialog.setCancelable(false)
+        alertDialog.show()
+
+    }
+
 
 
 }

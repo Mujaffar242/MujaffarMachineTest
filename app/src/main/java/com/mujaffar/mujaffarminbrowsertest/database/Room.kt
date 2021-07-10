@@ -66,7 +66,7 @@ interface ContactDao {
 /*
 * for get database object
 * */
-@Database(entities = [DatabaseContactModel::class], version = 1)
+@Database(entities = [DatabaseContactModel::class], version = 1,exportSchema = false)
 abstract class ContactDatabase : RoomDatabase() {
     abstract val contactDao: ContactDao
 }

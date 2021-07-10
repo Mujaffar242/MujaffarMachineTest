@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.ContactsContract
 import androidx.lifecycle.LiveData
+import com.mujaffar.mujaffarminbrowsertest.database.ContactDao
 import com.mujaffar.mujaffarminbrowsertest.database.ContactDatabase
 import com.mujaffar.mujaffarminbrowsertest.database.DatabaseContactModel
 import kotlinx.coroutines.Dispatchers
@@ -20,13 +21,13 @@ import java.io.InputStream
 /*
 * data source for provide data to our ui layer
 * */
-class ContactsRepository(val database: ContactDatabase, val applicatin: Application) {
+class ContactsRepository(val database: ContactDatabase, val applicatin: Context,val contactDao: ContactDao) {
     suspend fun getContactList() {
         withContext(Dispatchers.IO) {
             //save list of contact with favorite and delete status in local database
 
-            if((database.contactDao.getAllContacts().value== null))
-            database.contactDao.insertAll(getContacts(applicatin))
+            if((contactDao.getAllContacts().value== null))
+            contactDao.insertAll(getContacts(applicatin))
         }
     }
 
@@ -105,19 +106,19 @@ class ContactsRepository(val database: ContactDatabase, val applicatin: Applicat
     /*
     * get contact name with number and photos from room databse
     *  */
-    val contacts: LiveData<List<DatabaseContactModel?>?>? = database.contactDao.getDeletedOrNonDeletedList(false)
+    val contacts: LiveData<List<DatabaseContactModel?>?>? = contactDao.getDeletedOrNonDeletedList(false)
 
 
     /*
     * get list of deleted contact
     * */
-        val deletedContacts: LiveData<List<DatabaseContactModel?>?>? = database.contactDao.getDeletedOrNonDeletedList(true)
+        val deletedContacts: LiveData<List<DatabaseContactModel?>?>? = contactDao.getDeletedOrNonDeletedList(true)
 
 
     /*
     * get list of favorite contacts
     * */
-    val favoriteContacts:LiveData<List<DatabaseContactModel?>?>? = database.contactDao.getfavoriteContactList(true)
+    val favoriteContacts:LiveData<List<DatabaseContactModel?>?>? = contactDao.getfavoriteContactList(true)
 
 
             /*
@@ -125,19 +126,27 @@ class ContactsRepository(val database: ContactDatabase, val applicatin: Applicat
             * */
    suspend fun updateContact(contactModel: DatabaseContactModel) {
         withContext(Dispatchers.IO){
-            database.contactDao.update(contactModel)
+            contactDao.update(contactModel)
         }
     }
 
-    /*
-   * delete contact
-   * */
-    suspend fun deleteContact(contactModel: DatabaseContactModel) {
-        withContext(Dispatchers.IO){
-            database.contactDao.delete(contactModel)
-        }
+
+
+
+  suspend  fun updateFavoriteStatus(contactModel: DatabaseContactModel)
+    {
+        contactModel.isFavorite=!contactModel.isFavorite
+        updateContact(contactModel)
+
     }
 
+
+   suspend fun updateDeleteStatus(contactModel: DatabaseContactModel)
+    {
+        contactModel.isFavorite = false
+        contactModel.isDeleted=!contactModel.isDeleted
+        updateContact(contactModel)
+    }
 
 
 }

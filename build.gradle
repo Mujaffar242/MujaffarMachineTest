@@ -19,6 +19,7 @@ buildscript {
         version_recyclerview = "1.2.0-alpha05"
         version_room = "2.2.5"
         version_work = "1.0.1"
+        version_dragger = "2.37"
 
     }
 
